@@ -6,28 +6,25 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableCaption,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { TransactionData } from './AddTransactionDialog';
+import { format } from 'date-fns';
 
-interface Transaction {
-  id: string;
-  description: string;
-  amount: number;
-  date: string;
-  category: string;
-  type: "income" | "expense";
+interface RecentTransactionsProps {
+  transactions: TransactionData[];
 }
 
-const dummyTransactions: Transaction[] = [
-  { id: "1", description: "Groceries", amount: -75.50, date: "2024-07-25", category: "Food", type: "expense" },
-  { id: "2", description: "Salary", amount: 2500.00, date: "2024-07-24", category: "Work", type: "income" },
-  { id: "3", description: "Coffee Shop", amount: -5.25, date: "2024-07-24", category: "Food", type: "expense" },
-  { id: "4", description: "Online Subscription", amount: -12.99, date: "2024-07-23", category: "Entertainment", type: "expense" },
-  { id: "5", description: "Freelance Payment", amount: 500.00, date: "2024-07-22", category: "Work", type: "income" },
-  { id: "6", description: "Dinner with friends", amount: -45.00, date: "2024-07-21", category: "Social", type: "expense" },
-];
+const formatCurrency = (amount: number, currency: 'ZAR' | 'USD') => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+  }).format(amount);
+};
 
-const RecentTransactions: React.FC = () => {
+const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions }) => {
   return (
     <Card>
       <CardHeader>
@@ -35,22 +32,32 @@ const RecentTransactions: React.FC = () => {
       </CardHeader>
       <CardContent>
         <Table>
+          {transactions.length === 0 && <TableCaption>No transactions added yet.</TableCaption>}
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Category</TableHead>
+              <TableHead>Tag</TableHead>
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {dummyTransactions.map((transaction) => (
+            {transactions.map((transaction) => (
               <TableRow key={transaction.id}>
-                <TableCell>{transaction.date}</TableCell>
-                <TableCell>{transaction.description}</TableCell>
-                <TableCell>{transaction.category}</TableCell>
-                <TableCell className={`text-right ${transaction.type === "expense" ? "text-red-500" : "text-green-500"}`}>
-                  {transaction.type === "expense" ? "-" : "+"}${Math.abs(transaction.amount).toFixed(2)}
+                <TableCell>{format(transaction.date, "yyyy-MM-dd")}</TableCell>
+                <TableCell className="font-medium">{transaction.description}</TableCell>
+                <TableCell>
+                  <Badge variant="outline">{transaction.category}</Badge>
+                </TableCell>
+                <TableCell>
+                  {transaction.tagType === 'Project' 
+                    ? `Project: ${transaction.project}` 
+                    : transaction.tagType}
+                </TableCell>
+                <TableCell className={`text-right font-semibold ${transaction.type === "expense" ? "text-red-500" : "text-green-500"}`}>
+                  {transaction.type === "expense" ? "-" : "+"}
+                  {formatCurrency(transaction.amount, transaction.currency)}
                 </TableCell>
               </TableRow>
             ))}

@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import RecentTransactions from '@/components/RecentTransactions'; // Reusing the component
+import RecentTransactions from '@/components/RecentTransactions';
+import { AddTransactionDialog, TransactionData } from '@/components/AddTransactionDialog';
+import { TransactionFormValues } from '@/lib/validators';
 
 const Transactions: React.FC = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [transactions, setTransactions] = useState<TransactionData[]>([]);
+
+  const handleAddTransaction = (data: TransactionFormValues) => {
+    const newTransaction: TransactionData = {
+      ...data,
+      id: new Date().toISOString(),
+    };
+    setTransactions(prev => [newTransaction, ...prev]);
+  };
+
   return (
     <div className="space-y-6">
       <DashboardHeader
@@ -13,21 +26,25 @@ const Transactions: React.FC = () => {
         description="View and manage all your financial transactions."
       />
       <div className="flex justify-end">
-        <Button>
+        <Button onClick={() => setIsDialogOpen(true)}>
           <PlusCircle className="mr-2 h-4 w-4" /> Add New Transaction
         </Button>
       </div>
-      <RecentTransactions /> {/* Reusing the recent transactions table */}
+      <RecentTransactions transactions={transactions} />
       <Card>
         <CardHeader>
           <CardTitle>Transaction Filters</CardTitle>
           <CardDescription>Filter transactions by date, type, or category.</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Placeholder for filter controls */}
           <p className="text-muted-foreground">Filter controls will go here.</p>
         </CardContent>
       </Card>
+      <AddTransactionDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onAddTransaction={handleAddTransaction}
+      />
     </div>
   );
 };
