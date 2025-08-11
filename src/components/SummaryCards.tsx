@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, TrendingUp, TrendingDown, PiggyBank } from "lucide-react";
+import { DollarSign, TrendingDown, PiggyBank } from "lucide-react";
+import { useFinancials } from '@/contexts/FinancialContext';
 
 interface SummaryCardProps {
   title: string;
@@ -9,6 +10,14 @@ interface SummaryCardProps {
   icon: React.ElementType;
   iconColorClass: string;
 }
+
+const formatCurrency = (amount: number) => {
+  // For simplicity, defaulting to ZAR. A more robust solution would handle multiple currencies.
+  return new Intl.NumberFormat('en-ZA', {
+    style: 'currency',
+    currency: 'ZAR',
+  }).format(amount);
+};
 
 const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, description, icon: Icon, iconColorClass }) => {
   return (
@@ -26,31 +35,38 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, description, ic
 };
 
 const SummaryCards: React.FC = () => {
-  // Dummy data for demonstration
-  const totalIncome = "$5,200.00";
-  const totalExpenses = "$3,150.00";
-  const totalSavings = "$2,050.00";
+  const { transactions } = useFinancials();
+
+  const totalIncome = transactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalExpenses = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const netSavings = totalIncome - totalExpenses;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <SummaryCard
         title="Total Income"
-        value={totalIncome}
-        description="+20.1% from last month"
+        value={formatCurrency(totalIncome)}
+        description="Total income received"
         icon={DollarSign}
         iconColorClass="text-green-500"
       />
       <SummaryCard
         title="Total Expenses"
-        value={totalExpenses}
-        description="-5.3% from last month"
+        value={formatCurrency(totalExpenses)}
+        description="Total expenses paid"
         icon={TrendingDown}
         iconColorClass="text-red-500"
       />
       <SummaryCard
-        title="Total Savings"
-        value={totalSavings}
-        description="+15.8% from last month"
+        title="Net Savings"
+        value={formatCurrency(netSavings)}
+        description="Income minus expenses"
         icon={PiggyBank}
         iconColorClass="text-blue-500"
       />
