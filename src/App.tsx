@@ -6,7 +6,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
-import Overview from "./pages/Overview"; // Import the new Overview page
+import Overview from "./pages/Overview";
+import Transactions from "./pages/Transactions"; // Import new page
+import Budgets from "./pages/Budgets";       // Import new page
+import Reports from "./pages/Reports";       // Import new page
 
 const queryClient = new QueryClient();
 
@@ -21,10 +24,9 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<Overview />} /> {/* Default dashboard view */}
-            {/* Add more nested dashboard routes here if needed */}
-            <Route path="transactions" element={<div>Transactions Page Content</div>} />
-            <Route path="budgets" element={<div>Budgets Page Content</div>} />
-            <Route path="reports" element={<div>Reports Page Content</div>} />
+            <Route path="transactions" element={<Transactions />} />
+            <Route path="budgets" element={<Budgets />} />
+            <Route path="reports" element={<Reports />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
