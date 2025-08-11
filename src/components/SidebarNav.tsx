@@ -9,9 +9,10 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
     title: string;
     icon: React.ElementType;
   }[];
+  onLinkClick?: () => void;
 }
 
-export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
+export function SidebarNav({ className, items, onLinkClick, ...props }: SidebarNavProps) {
   const location = useLocation();
 
   return (
@@ -29,7 +30,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
           variant={location.pathname === item.href ? "secondary" : "ghost"}
           className="justify-start"
         >
-          <Link to={item.href}>
+          <Link to={item.href} onClick={onLinkClick}>
             <item.icon className="mr-2 h-4 w-4" />
             {item.title}
           </Link>
