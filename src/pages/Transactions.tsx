@@ -4,20 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import RecentTransactions from '@/components/RecentTransactions';
-import { AddTransactionDialog, TransactionData } from '@/components/AddTransactionDialog';
+import { AddTransactionDialog } from '@/components/AddTransactionDialog';
 import { TransactionFormValues } from '@/lib/validators';
+import { useFinancials } from '@/contexts/FinancialContext';
 
 const Transactions: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [transactions, setTransactions] = useState<TransactionData[]>([]);
-
-  const handleAddTransaction = (data: TransactionFormValues) => {
-    const newTransaction: TransactionData = {
-      ...data,
-      id: new Date().toISOString(),
-    };
-    setTransactions(prev => [newTransaction, ...prev]);
-  };
+  const { transactions, addTransaction } = useFinancials();
 
   return (
     <div className="space-y-6">
@@ -43,7 +36,7 @@ const Transactions: React.FC = () => {
       <AddTransactionDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        onAddTransaction={handleAddTransaction}
+        onAddTransaction={addTransaction}
       />
     </div>
   );

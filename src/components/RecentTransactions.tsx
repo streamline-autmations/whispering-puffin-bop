@@ -10,11 +10,12 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TransactionData } from './AddTransactionDialog';
+import { TransactionData } from '@/contexts/FinancialContext';
 import { format } from 'date-fns';
 
 interface RecentTransactionsProps {
   transactions: TransactionData[];
+  limit?: number;
 }
 
 const formatCurrency = (amount: number, currency: 'ZAR' | 'USD') => {
@@ -24,7 +25,9 @@ const formatCurrency = (amount: number, currency: 'ZAR' | 'USD') => {
   }).format(amount);
 };
 
-const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions }) => {
+const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, limit }) => {
+  const displayedTransactions = limit ? transactions.slice(0, limit) : transactions;
+
   return (
     <Card>
       <CardHeader>
@@ -32,7 +35,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions })
       </CardHeader>
       <CardContent>
         <Table>
-          {transactions.length === 0 && <TableCaption>No transactions added yet.</TableCaption>}
+          {displayedTransactions.length === 0 && <TableCaption>No transactions added yet.</TableCaption>}
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
@@ -43,7 +46,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions })
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.map((transaction) => (
+            {displayedTransactions.map((transaction) => (
               <TableRow key={transaction.id}>
                 <TableCell>{format(transaction.date, "yyyy-MM-dd")}</TableCell>
                 <TableCell className="font-medium">{transaction.description}</TableCell>

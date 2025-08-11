@@ -20,3 +20,10 @@ export const transactionSchema = z.object({
 });
 
 export type TransactionFormValues = z.infer<typeof transactionSchema>;
+
+export const budgetSchema = z.object({
+    name: z.string().min(1, { message: "Project name is required." }),
+    amount: z.coerce.number().positive({ message: "Budget amount must be a positive number." }),
+});
+
+export type BudgetFormValues = z.infer<typeof budgetSchema>;
