@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">whispering-puffin-bop</string>
+    <string name="title_activity_main">whispering-puffin-bop</string>
+    <string name="package_name">com.example.whisperingpuffinbop</string>
+    <string name="custom_url_scheme">com.example.whisperingpuffinbop</string>
+</resources>
